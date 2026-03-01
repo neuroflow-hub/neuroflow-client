@@ -2,20 +2,20 @@
 
 The frontend and Electron wrapper for the Neuroflow IDE. This component provides the drag-and-drop interface for building machine learning workflows.
 
-## 🚀 Features
+## Features
 
 - **Visual Workflow Builder**: Powered by `React Flow`.
 - **Real-time Data Visualization**: Integrated `Chart.js` for plotting.
 - **Microservices Orchestration**: Seamlessly communicates with the `neuroflow-logic` backend.
 - **Cross-Platform Desktop App**: Built with `Electron` for a native experience.
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 - **Frontend**: React 19, Vite, CSS (Vanilla with modern tokens).
 - **Runtime**: Node.js, Electron.
 - **Icons**: React Icons (Fa, Md, etc.).
 
-## 📦 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -51,7 +51,7 @@ To build a standalone desktop application:
 npm run electron:build
 ```
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! To get started:
 1. **Fork** the repository.
@@ -66,6 +66,6 @@ We welcome contributions! To get started:
 - Follow the established CSS naming conventions in `src/styles`.
 - Ensure all new nodes are registered in the `OBJECT_POOL` and documented.
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the root LICENSE file for details.
