@@ -1,3 +1,16 @@
+export interface ContextMenuState {
+    x: number;
+    y: number;
+    nodeId: string;
+    nodeType?: string;
+}
+
+export interface EdgeContextMenuState {
+    x: number;
+    y: number;
+    edgeId: string;
+}
+
 export interface AppState {
     theme: 'light' | 'dark' | 'system';
     activeNodeId: string | null;
@@ -6,6 +19,8 @@ export interface AppState {
     isNodeInfoOpen: boolean;
     appFont: string;
     isSettingsModalOpen: boolean;
+    nodeContextMenu: ContextMenuState | null;
+    edgeContextMenu: EdgeContextMenuState | null;
     setTheme: (theme: 'light' | 'dark' | 'system') => void;
     setActiveNodeId: (nodeId: string | null) => void;
     setEdgeType: (type: 'default' | 'straight' | 'step' | 'smoothstep' | 'simplebezier') => void;
@@ -13,6 +28,8 @@ export interface AppState {
     closeNodeInfo: () => void;
     setAppFont: (font: string) => void;
     setIsSettingsModalOpen: (isOpen: boolean) => void;
+    setNodeContextMenu: (menu: ContextMenuState | null) => void;
+    setEdgeContextMenu: (menu: EdgeContextMenuState | null) => void;
 }
 
 import { create } from 'zustand';
@@ -25,6 +42,8 @@ export const useAppStore = create<AppState>((set) => ({
     isNodeInfoOpen: false,
     appFont: 'Inter',
     isSettingsModalOpen: false,
+    nodeContextMenu: null,
+    edgeContextMenu: null,
     setTheme: (theme) => set({ theme }),
     setActiveNodeId: (activeNodeId) => set({ activeNodeId }),
     setEdgeType: (edgeType) => set({ edgeType }),
@@ -32,4 +51,6 @@ export const useAppStore = create<AppState>((set) => ({
     closeNodeInfo: () => set({ nodeInfo: null, isNodeInfoOpen: false }),
     setAppFont: (appFont) => set({ appFont }),
     setIsSettingsModalOpen: (isSettingsModalOpen) => set({ isSettingsModalOpen }),
+    setNodeContextMenu: (nodeContextMenu) => set({ nodeContextMenu }),
+    setEdgeContextMenu: (edgeContextMenu) => set({ edgeContextMenu }),
 }));

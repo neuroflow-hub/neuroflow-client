@@ -1,5 +1,7 @@
 import React from 'react';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { MdMoreVert } from 'react-icons/md';
+import { useAppStore } from '../../store/useAppStore';
 import useNodeCollapse from '../../hooks/useNodeCollapse';
 import './CollapsibleNodeWrapper.css';
 
@@ -66,6 +68,8 @@ const CollapsibleNodeWrapper: React.FC<CollapsibleNodeWrapperProps> = ({
         canCollapse
     } = useNodeCollapse(nodeId, defaultCollapsed, forceExpand);
 
+    const { setNodeContextMenu } = useAppStore();
+
     // State to manage overflow visibility (for tooltips/popups)
     const [isOverflowVisible, setIsOverflowVisible] = React.useState(!isCollapsed);
 
@@ -93,12 +97,24 @@ const CollapsibleNodeWrapper: React.FC<CollapsibleNodeWrapperProps> = ({
 
     const handleHeaderClick = (e: React.MouseEvent) => {
         // Don't toggle if clicking on info button or other interactive elements
-        if ((e.target as HTMLElement).closest('.collapsible-node-info-button')) {
+        if ((e.target as HTMLElement).closest('.collapsible-node-info-button') || (e.target as HTMLElement).closest('.node-action-button')) {
             return;
         }
         if (canCollapse && showCollapseToggle) {
             toggleCollapse();
         }
+    };
+
+    const handleNodeActionClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        e.preventDefault();
+        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+        setNodeContextMenu({
+            x: rect.right - 180, // Align right edge of menu (approx 180px wide) with right edge of button
+            y: rect.bottom + 8,  // Spawn 8px below the button
+            nodeId: nodeId,
+            nodeType: nodeType,
+        });
     };
 
     const handleChevronClick = (e: React.MouseEvent) => {
@@ -143,6 +159,15 @@ const CollapsibleNodeWrapper: React.FC<CollapsibleNodeWrapperProps> = ({
                                 <div className="collapsible-node-info-button-inline" onClick={(e) => e.stopPropagation()}>
                                     {infoButton}
                                 </div>
+                            )}
+                            {nodeType !== 'start' && (
+                                <button
+                                    className="node-action-button flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-black/5 transition-all p-1 -ml-1 rounded-md cursor-pointer pointer-events-auto opacity-70 hover:opacity-100"
+                                    onClick={handleNodeActionClick}
+                                    title="Node Actions"
+                                >
+                                    <MdMoreVert className="w-4 h-4" />
+                                </button>
                             )}
                         </div>
                         {subtitle && <div className="collapsible-node-subtitle" title={subtitle}>{subtitle}</div>}

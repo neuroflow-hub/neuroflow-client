@@ -75,17 +75,7 @@ import StartNode from '../components/nodes/StartNode';
 let id = 1;
 const getId = () => `node_${id++}`;
 
-interface ContextMenuState {
-  x: number;
-  y: number;
-  node: Node;
-}
 
-interface EdgeContextMenuState {
-  x: number;
-  y: number;
-  edgeId: string;
-}
 
 const EditorPage = () => {
   const { edgeType } = useAppStore();
@@ -158,8 +148,7 @@ const EditorPage = () => {
   }, []);
 
   // Context menu state
-  const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
-  const [edgeContextMenu, setEdgeContextMenu] = useState<EdgeContextMenuState | null>(null);
+  const { nodeContextMenu, setNodeContextMenu, edgeContextMenu, setEdgeContextMenu } = useAppStore();
 
   // Data view modal state
   const [dataViewModal, setDataViewModal] = useState<any>(null);
@@ -411,18 +400,6 @@ const EditorPage = () => {
     });
   }, [nodes, saveToHistory]);
 
-  const onNodeContextMenu = useCallback((event: React.MouseEvent, node: Node) => {
-    event.preventDefault();
-    if (node.type === 'start') {
-      return;
-    }
-    setContextMenu({
-      x: event.clientX,
-      y: event.clientY,
-      node: node,
-    });
-  }, []);
-
   const onEdgeContextMenu = useCallback((event: React.MouseEvent, edge: Edge) => {
     event.preventDefault();
     setEdgeContextMenu({
@@ -430,19 +407,19 @@ const EditorPage = () => {
       y: event.clientY,
       edgeId: edge.id,
     });
-  }, []);
+  }, [setEdgeContextMenu]);
 
   useEffect(() => {
     const handleClick = () => {
-      setContextMenu(null);
+      setNodeContextMenu(null);
       setEdgeContextMenu(null);
     };
 
-    if (contextMenu || edgeContextMenu) {
+    if (nodeContextMenu || edgeContextMenu) {
       document.addEventListener('click', handleClick);
       return () => document.removeEventListener('click', handleClick);
     }
-  }, [contextMenu, edgeContextMenu]);
+  }, [nodeContextMenu, edgeContextMenu, setNodeContextMenu, setEdgeContextMenu]);
 
   const handleDeleteNode = useCallback((nodeId: string) => {
     setNodes((nds) => {
@@ -456,7 +433,7 @@ const EditorPage = () => {
       });
       return newNodes;
     });
-    setContextMenu(null);
+    setNodeContextMenu(null);
   }, [saveToHistory]);
 
   const handleDeleteEdge = useCallback((edgeId: string) => {
@@ -526,7 +503,6 @@ const EditorPage = () => {
               onInit={setReactFlowInstance}
               onDrop={onDrop}
               onDragOver={onDragOver}
-              onNodeContextMenu={onNodeContextMenu}
               onEdgeContextMenu={onEdgeContextMenu}
               nodeTypes={nodeTypes}
               edgeTypes={edgeTypes}
@@ -550,8 +526,9 @@ const EditorPage = () => {
               />
             </ReactFlow>
 
-            {contextMenu && (() => {
-              const node = contextMenu.node;
+            {nodeContextMenu && (() => {
+              const node = nodes.find(n => n.id === nodeContextMenu.nodeId);
+              if (!node) return null;
               const customActions = [];
 
               // Only define configuration, avoid expensive closures if possible
@@ -739,9 +716,11 @@ const EditorPage = () => {
 
               return (
                 <ContextMenu
-                  x={contextMenu.x}
-                  y={contextMenu.y}
-                  onClose={() => setContextMenu(null)}
+                  x={nodeContextMenu.x}
+                  y={nodeContextMenu.y}
+                  nodeId={nodeContextMenu.nodeId}
+                  nodeType={nodeContextMenu.nodeType || node.type}
+                  onClose={() => setNodeContextMenu(null)}
                   onDelete={() => handleDeleteNode(node.id)}
                   onDuplicate={() => {
                     const duplicateNode = {
@@ -755,7 +734,7 @@ const EditorPage = () => {
                       setTimeout(() => saveToHistory(newNodes, edges), 100);
                       return newNodes;
                     });
-                    setContextMenu(null);
+                    setNodeContextMenu(null);
                   }}
                   customActions={customActions}
                 />
