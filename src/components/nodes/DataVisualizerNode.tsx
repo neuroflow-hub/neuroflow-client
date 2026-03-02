@@ -45,7 +45,7 @@ function createAxes(xDomain, yDomain, xLabel, yLabel, isNumericX = true) {
         y1={yPos}
         x2={width - padding}
         y2={yPos}
-        stroke="rgba(255, 255, 255, 0.1)"
+        stroke="#f1f5f9"
         strokeWidth="1"
         strokeDasharray="3,3"
       />
@@ -59,7 +59,7 @@ function createAxes(xDomain, yDomain, xLabel, yLabel, isNumericX = true) {
       y1={height - bottomPadding}
       x2={width - padding}
       y2={height - bottomPadding}
-      stroke="#94a3b8"
+      stroke="#cbd5e1"
       strokeWidth="2"
     />
   );
@@ -71,7 +71,7 @@ function createAxes(xDomain, yDomain, xLabel, yLabel, isNumericX = true) {
       y1={padding}
       x2={padding}
       y2={height - bottomPadding}
-      stroke="#94a3b8"
+      stroke="#cbd5e1"
       strokeWidth="2"
     />
   );
@@ -86,13 +86,13 @@ function createAxes(xDomain, yDomain, xLabel, yLabel, isNumericX = true) {
     const xPos = scaleX(x);
     xTicks.push(
       <g key={`x-tick-${i}`}>
-        <line x1={xPos} y1={height - bottomPadding} x2={xPos} y2={height - bottomPadding + 5} stroke="#64748b" strokeWidth="1.5" />
+        <line x1={xPos} y1={height - bottomPadding} x2={xPos} y2={height - bottomPadding + 5} stroke="#cbd5e1" strokeWidth="1.5" />
         <text
           x={xPos}
           y={height - bottomPadding + 15}
           textAnchor="middle"
           fontSize="11"
-          fill="#cbd5e1"
+          fill="#64748b"
           fontWeight="500"
         >
           {formatNumber(x)}
@@ -109,13 +109,13 @@ function createAxes(xDomain, yDomain, xLabel, yLabel, isNumericX = true) {
     const yPos = scaleY(y);
     yTicks.push(
       <g key={`y-tick-${i}`}>
-        <line x1={padding} y1={yPos} x2={padding - 5} y2={yPos} stroke="#64748b" strokeWidth="1.5" />
+        <line x1={padding} y1={yPos} x2={padding - 5} y2={yPos} stroke="#cbd5e1" strokeWidth="1.5" />
         <text
           x={padding - 10}
           y={yPos + 4}
           textAnchor="end"
           fontSize="11"
-          fill="#cbd5e1"
+          fill="#64748b"
           fontWeight="500"
         >
           {formatNumber(y)}
@@ -136,7 +136,7 @@ function createAxes(xDomain, yDomain, xLabel, yLabel, isNumericX = true) {
         y={height - 10}
         textAnchor="middle"
         fontSize="13"
-        fill="#e2e8f0"
+        fill="#334155"
         fontWeight="600"
       >
         {xLabel}
@@ -146,7 +146,7 @@ function createAxes(xDomain, yDomain, xLabel, yLabel, isNumericX = true) {
         y={height / 2}
         textAnchor="middle"
         fontSize="13"
-        fill="#e2e8f0"
+        fill="#334155"
         fontWeight="600"
         transform={`rotate(-90, 15, ${height / 2})`}
       >
@@ -233,7 +233,7 @@ function createHistogram(values, bins, label) {
           y={height - bottomPadding + (shouldRotateLabels ? 20 : 15)}
           textAnchor={shouldRotateLabels ? "end" : "middle"}
           fontSize="10"
-          fill="#cbd5e1"
+          fill="#64748b"
           fontWeight="500"
           transform={shouldRotateLabels ? `rotate(-45, ${x + binWidth / 2}, ${height - bottomPadding + 20})` : ''}
         >
@@ -245,7 +245,7 @@ function createHistogram(values, bins, label) {
             y={y - 8}
             textAnchor="middle"
             fontSize="11"
-            fill="#e2e8f0"
+            fill="#334155"
             fontWeight="600"
           >
             {bin.count}
@@ -307,7 +307,7 @@ function createBarChart(categories, values, label) {
           y={height - bottomPadding + (shouldRotateLabels ? 20 : 15)}
           textAnchor={shouldRotateLabels ? "end" : "middle"}
           fontSize="10"
-          fill="#cbd5e1"
+          fill="#64748b"
           fontWeight="500"
           transform={shouldRotateLabels ? `rotate(-45, ${x + barWidth / 2}, ${height - bottomPadding + 20})` : ''}
         >
@@ -319,7 +319,7 @@ function createBarChart(categories, values, label) {
             y={y - 8}
             textAnchor="middle"
             fontSize="11"
-            fill="#e2e8f0"
+            fill="#334155"
             fontWeight="600"
           >
             {values[i]}

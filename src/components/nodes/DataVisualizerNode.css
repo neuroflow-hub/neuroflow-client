@@ -1,24 +1,22 @@
-/* Data Visualizer Node - Dark/Glass Theme */
+/* Data Visualizer Node - Light Theme */
 .data-visualizer-node {
-  background: rgba(30, 30, 35, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
   padding: 20px;
   width: 580px;
   min-height: 540px;
-  font-family: 'Inter', sans-serif;
+  font-family: inherit;
   display: flex;
   flex-direction: column;
-  color: #e2e8f0;
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
+  color: #1e293b;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .data-visualizer-node:hover {
-  box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.4);
-  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  border-color: #cbd5e1;
   transform: translateY(-2px);
 }
 
@@ -26,8 +24,8 @@
   font-weight: 700;
   margin-bottom: 20px;
   font-size: 16px;
-  color: #f8fafc;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: #0f172a;
+  border-bottom: 1px solid #e2e8f0;
   padding-bottom: 12px;
   display: flex;
   align-items: center;
@@ -40,10 +38,10 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  background: rgba(255, 255, 255, 0.03);
+  background: #f8fafc;
   padding: 16px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid #f1f5f9;
 }
 
 .dv-chart-type,
@@ -59,22 +57,22 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-weight: 600;
-  color: #94a3b8;
+  color: #64748b;
 }
 
 .dv-chart-type select,
 .dv-column-select select {
   padding: 10px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid #cbd5e1;
   border-radius: 8px;
   font-size: 13px;
-  background: rgba(0, 0, 0, 0.2);
-  color: #f1f5f9;
+  background: white;
+  color: #334155;
   cursor: pointer;
   transition: all 0.2s;
   appearance: none;
   /* Remove default arrow */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
   background-size: 16px;
@@ -83,10 +81,9 @@
 .dv-chart-type select:focus,
 .dv-column-select select:focus {
   outline: none;
-  border-color: #6366f1;
-  /* Primary color */
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
-  background-color: rgba(0, 0, 0, 0.4);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  background-color: white;
 }
 
 .dv-content {
@@ -95,15 +92,15 @@
   align-items: center;
   justify-content: center;
   min-height: 400px;
-  background: rgba(0, 0, 0, 0.2);
+  background: white;
   border-radius: 12px;
   padding: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid #e2e8f0;
 }
 
 .dv-placeholder {
   font-size: 0.95em;
-  color: #94a3b8;
+  color: #64748b;
   text-align: center;
   padding: 40px;
   background: transparent;
@@ -116,10 +113,9 @@
 
 /* Chart SVG Styling */
 .chart-svg {
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.05));
   animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   background: transparent !important;
-  /* Override white background */
 }
 
 @keyframes fadeIn {
@@ -143,9 +139,9 @@
 .scatter-point:hover {
   r: 8;
   opacity: 1 !important;
-  stroke: rgba(255, 255, 255, 0.8);
+  stroke: rgba(0, 0, 0, 0.8);
   stroke-width: 2px;
-  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.2));
 }
 
 .bar-element {
@@ -155,18 +151,15 @@
 
 .bar-element:hover {
   opacity: 0.8 !important;
-  /* Brighter */
-  filter: brightness(1.2);
+  filter: brightness(0.9);
 }
 
 /* Custom handles */
 .custom-handle {
   width: 12px !important;
   height: 12px !important;
-  background-color: #6366f1 !important;
-  /* Primary color handle */
-  border: 2px solid #1e1e24 !important;
-  /* Match bg */
+  background-color: #3b82f6 !important;
+  border: 2px solid white !important;
   border-radius: 50%;
   transition: all 0.2s ease-in-out;
   z-index: 10;
@@ -175,20 +168,19 @@
 .data-visualizer-node:hover .custom-handle,
 .react-flow__node.selected .custom-handle {
   transform: scale(1.2);
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
 }
 
-/* Axis and Label overrides for dark mode charts - handled in component via props ideally, but CSS overrides here */
+/* Axis and Label overrides for light mode charts */
 .chart-svg text {
-  fill: #cbd5e1 !important;
-  font-family: 'Inter', sans-serif !important;
+  fill: #475569 !important;
+  font-family: inherit !important;
 }
 
 .chart-svg line {
-  stroke: rgba(255, 255, 255, 0.1) !important;
+  stroke: #cbd5e1 !important;
 }
 
 .chart-svg rect:first-child {
   fill: transparent !important;
-  /* Transparent background for chart area */
 }
