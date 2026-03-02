@@ -323,7 +323,7 @@ const EditorPage = () => {
         ...params,
         type: currentEdgeType,
         style: { stroke: edgeColor, strokeWidth: 2 },
-        markerEnd: { type: 'arrowclosed', color: edgeColor },
+        markerEnd: `arrow-${nodeType}`,
       };
 
       const newEdges = addEdge(newEdge, eds);
@@ -465,14 +465,32 @@ const EditorPage = () => {
 
   const defaultEdgeOptions = useMemo(() => ({
     type: edgeType,
-    markerEnd: { type: MarkerType.ArrowClosed, color: '#6a1b9a' },
     style: { stroke: '#6a1b9a', strokeWidth: 2 },
+    markerEnd: 'arrow-default',
   }), [edgeType]);
 
   const proOptions = useMemo(() => ({ hideAttribution: true }), []);
 
   return (
     <div className={`relative h-screen w-screen overflow-hidden bg-background text-foreground flex flex-col ${activeTool === 'pan' ? 'cursor-grab active:cursor-grabbing' : ''}`}>
+      <svg style={{ position: 'absolute', width: 0, height: 0 }}>
+        <defs>
+          {Object.entries(nodeColors).map(([type, color]) => (
+            <marker
+              key={`arrow-${type}`}
+              id={`arrow-${type}`}
+              viewBox="0 -5 10 10"
+              refX="18"
+              refY="0"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M 0 -5 L 10 0 L 0 5 z" fill={color} />
+            </marker>
+          ))}
+        </defs>
+      </svg>
       {isBooting && <GameOfLifeLoading onStart={handleStart} fadeOut={showFlow} />}
       <TitleBar title={projectTitle} />
       <div className="flex-1 flex relative overflow-hidden mt-10">

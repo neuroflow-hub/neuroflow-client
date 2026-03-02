@@ -574,93 +574,94 @@ function DataVisualizerNode({ id, data, isConnectable }) {
   const hasData = upstreamData && vizData.headers.length > 0;
 
   return (
-    <div className="data-visualizer-node">
-      <InfoButton nodeType="dataVisualizer" />
-      <div className="dv-title">Data Visualizer</div>
+    <>
+      <div className="data-visualizer-node">
+        <InfoButton nodeType="dataVisualizer" />
+        <div className="dv-title">Data Visualizer</div>
 
-      {hasData && (
-        <div className="dv-controls">
-          <div className="dv-chart-type">
-            <label>Chart Type:</label>
-            <select value={chartType} onChange={(e) => setChartType(e.target.value)}>
-              <option value="scatter">Scatter Plot</option>
-              <option value="histogram">Histogram</option>
-              <option value="bar">Bar Chart</option>
-            </select>
-          </div>
-
-          {chartType === 'scatter' && (
-            <>
-              <div className="dv-column-select">
-                <label>X Axis:</label>
-                <select value={xColumn} onChange={(e) => setXColumn(e.target.value)}>
-                  <option value="">Select column</option>
-                  {vizData.headers.map((h) => (
-                    <option key={h} value={h}>{h}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="dv-column-select">
-                <label>Y Axis:</label>
-                <select value={yColumn} onChange={(e) => setYColumn(e.target.value)}>
-                  <option value="">Select column</option>
-                  {vizData.headers.map((h) => (
-                    <option key={h} value={h}>{h}</option>
-                  ))}
-                </select>
-              </div>
-            </>
-          )}
-
-          {chartType === 'histogram' && (
-            <div className="dv-column-select">
-              <label>Column:</label>
-              <select value={histogramColumn} onChange={(e) => setHistogramColumn(e.target.value)}>
-                <option value="">Select column</option>
-                {vizData.headers.map((h) => (
-                  <option key={h} value={h}>{h}</option>
-                ))}
+        {hasData && (
+          <div className="dv-controls">
+            <div className="dv-chart-type">
+              <label>Chart Type:</label>
+              <select value={chartType} onChange={(e) => setChartType(e.target.value)}>
+                <option value="scatter">Scatter Plot</option>
+                <option value="histogram">Histogram</option>
+                <option value="bar">Bar Chart</option>
               </select>
             </div>
-          )}
 
-          {chartType === 'bar' && (
-            <div className="dv-column-select">
-              <label>Column:</label>
-              <select value={barChartColumn} onChange={(e) => setBarChartColumn(e.target.value)}>
-                <option value="">Select column</option>
-                {vizData.headers.map((h) => (
-                  <option key={h} value={h}>{h}</option>
-                ))}
-              </select>
+            {chartType === 'scatter' && (
+              <>
+                <div className="dv-column-select">
+                  <label>X Axis:</label>
+                  <select value={xColumn} onChange={(e) => setXColumn(e.target.value)}>
+                    <option value="">Select column</option>
+                    {vizData.headers.map((h) => (
+                      <option key={h} value={h}>{h}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="dv-column-select">
+                  <label>Y Axis:</label>
+                  <select value={yColumn} onChange={(e) => setYColumn(e.target.value)}>
+                    <option value="">Select column</option>
+                    {vizData.headers.map((h) => (
+                      <option key={h} value={h}>{h}</option>
+                    ))}
+                  </select>
+                </div>
+              </>
+            )}
+
+            {chartType === 'histogram' && (
+              <div className="dv-column-select">
+                <label>Column:</label>
+                <select value={histogramColumn} onChange={(e) => setHistogramColumn(e.target.value)}>
+                  <option value="">Select column</option>
+                  {vizData.headers.map((h) => (
+                    <option key={h} value={h}>{h}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {chartType === 'bar' && (
+              <div className="dv-column-select">
+                <label>Column:</label>
+                <select value={barChartColumn} onChange={(e) => setBarChartColumn(e.target.value)}>
+                  <option value="">Select column</option>
+                  {vizData.headers.map((h) => (
+                    <option key={h} value={h}>{h}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="dv-content">
+          {updateVisualization || (
+            <div className="dv-placeholder">
+              {hasData ? 'Select chart type and columns to visualize' : 'Connect a data source (CSV, Cleaner, Encoder, Normalizer) to visualize data'}
             </div>
           )}
         </div>
-      )}
 
-      <div className="dv-content">
-        {updateVisualization || (
-          <div className="dv-placeholder">
-            {hasData ? 'Select chart type and columns to visualize' : 'Connect a data source (CSV, Cleaner, Encoder, Normalizer) to visualize data'}
+        {categoryAggregationInfo && (
+          <div style={{
+            margin: '10px 15px',
+            padding: '8px 12px',
+            backgroundColor: '#fff3cd',
+            border: '1px solid #ffc107',
+            borderRadius: '4px',
+            fontSize: '12px',
+            color: '#856404',
+            textAlign: 'center'
+          }}>
+            ℹ️ Showing top {categoryAggregationInfo.shownCategories} categories. {categoryAggregationInfo.aggregatedCount} categories grouped into "Others".
           </div>
         )}
       </div>
-
-      {categoryAggregationInfo && (
-        <div style={{
-          margin: '10px 15px',
-          padding: '8px 12px',
-          backgroundColor: '#fff3cd',
-          border: '1px solid #ffc107',
-          borderRadius: '4px',
-          fontSize: '12px',
-          color: '#856404',
-          textAlign: 'center'
-        }}>
-          ℹ️ Showing top {categoryAggregationInfo.shownCategories} categories. {categoryAggregationInfo.aggregatedCount} categories grouped into "Others".
-        </div>
-      )}
-
       <Handle
         type="target"
         position={Position.Top}
@@ -675,7 +676,7 @@ function DataVisualizerNode({ id, data, isConnectable }) {
         className="custom-handle"
         id="target-left"
       />
-    </div>
+    </>
   );
 }
 

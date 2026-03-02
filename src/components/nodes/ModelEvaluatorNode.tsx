@@ -1037,356 +1037,356 @@ const ModelEvaluatorNode = ({ id, data, isConnectable }) => {
   const header = getHeaderInfo();
 
   return (
-    <div className="model-evaluator-node">
-      <Handle type="target" position={Position.Top} isConnectable={isConnectable} />
+    <>
+      <Handle type="target" position={Position.Top} isConnectable={isConnectable} className="custom-handle" style={{ zIndex: 10 }} />
+      <div className="model-evaluator-node">
 
-      {/* 1. Header Section */}
-      <div className="me-header" style={{ background: `linear-gradient(135deg, ${header.color} 0%, ${header.color}dd 100%)` }}>
-        <div className="me-header-main">
-          <div className="me-header-icon">
-            {header.icon}
-          </div>
-          <div className="me-header-info">
-            <span className="me-title">{data.label || header.label}</span>
-            <span className="me-subtitle">
-              {upstreamModel ? 'Ready to Predict' : 'Waiting for Model'}
-            </span>
-          </div>
-        </div>
-        {upstreamModel && <div className="me-status-dot" title="Model Connected"></div>}
-      </div>
-
-      {!upstreamModel ? (
-        <div className="me-placeholder">
-          <div>Connect a trained model node to start evaluating predictions</div>
-        </div>
-      ) : !modelInfo ? (
-        <div className="me-error">
-          Model is connected but not trained yet. Please run the training node first.
-        </div>
-      ) : (
-        <>
-          {/* 2. Input Section */}
-          <div className="me-input-section">
-            <div className="me-section-title">
-              <FaLightbulb color="#f59e0b" /> Input Features
+        {/* 1. Header Section */}
+        <div className="me-header" style={{ background: `linear-gradient(135deg, ${header.color} 0%, ${header.color}dd 100%)` }}>
+          <div className="me-header-main">
+            <div className="me-header-icon">
+              {header.icon}
             </div>
-            <div className="me-input-grid">
-              {modelInfo.featureNames.map((feature) => (
-                <div key={feature} className="me-input-field">
-                  <ClickToEditInput
-                    label={feature}
-                    value={inputValues[feature] || ''}
-                    onChange={(val) => handleInputChange(feature, val)}
-                    placeholder="0.00"
-                  />
-                </div>
-              ))}
+            <div className="me-header-info">
+              <span className="me-title">{data.label || header.label}</span>
+              <span className="me-subtitle">
+                {upstreamModel ? 'Ready to Predict' : 'Waiting for Model'}
+              </span>
             </div>
           </div>
+          {upstreamModel && <div className="me-status-dot" title="Model Connected"></div>}
+        </div>
 
-          {/* 3. Pipeline Indicator (Only if preprocessing exists) */}
-          {modelInfo.model.preprocessing && (
-            <div className="me-pipeline">
-              <div className="me-pipeline-step">Input</div>
-              <FaArrowRight className="me-pipeline-arrow" />
-              <div className="me-pipeline-step" title="Standardization applied">Standardize</div>
-              <FaArrowRight className="me-pipeline-arrow" />
-              <div className="me-pipeline-step" title={`${modelInfo.model.preprocessing.type.toUpperCase()} Projection applied`}>
-                {modelInfo.model.preprocessing.type.toUpperCase()}
+        {!upstreamModel ? (
+          <div className="me-placeholder">
+            <div>Connect a trained model node to start evaluating predictions</div>
+          </div>
+        ) : !modelInfo ? (
+          <div className="me-error">
+            Model is connected but not trained yet. Please run the training node first.
+          </div>
+        ) : (
+          <>
+            {/* 2. Input Section */}
+            <div className="me-input-section">
+              <div className="me-section-title">
+                <FaLightbulb color="#f59e0b" /> Input Features
               </div>
-              <FaArrowRight className="me-pipeline-arrow" />
-              <div className="me-pipeline-step">Model</div>
-            </div>
-          )}
-
-          {/* 4. Action Area */}
-          <div className="me-actions">
-            <button className="me-compute-btn" onClick={calculatePrediction}>
-              <FaPlay style={{ fontSize: '0.8em' }} /> Compute Prediction
-            </button>
-          </div>
-
-          {/* 5. Error Display */}
-          {error && <div className="me-error">{error}</div>}
-
-          {/* 6. Result Hero Section */}
-          {/* 6. Result Hero Section (Always Visible) & 7. Details Panel (Collapsible) */}
-          {prediction && (
-            <>
-              <div className="me-result-hero">
-                {/* REGRESSION HERO */}
-                {(prediction.type === 'linear' || prediction.type === 'multiLinear' || prediction.type === 'polynomial' || prediction.type === 'knn') && (
-                  <>
-                    <div className="me-result-label">Predicted Target</div>
-                    <div className="me-result-value">
-                      {prediction.prediction.toFixed(4)}
-                    </div>
-                  </>
-                )}
-
-                {/* CLASSIFICATION HERO */}
-                {(prediction.type === 'logistic' || prediction.type === 'knnClassification' || prediction.type === 'naiveBayes') && (
-                  <>
-                    <div className="me-result-label">Predicted Class</div>
-                    <div className="me-result-pill" style={{
-                      background: '#f0fdf4',
-                      color: '#166534',
-                      border: '1px solid #bbf7d0'
-                    }}>
-                      Class {prediction.prediction}
-                    </div>
-                    {(prediction.confidence || prediction.probability) && (
-                      <div className="me-hero-metric">
-                        Confidence: <strong>{prediction.confidence || (prediction.probability * 100).toFixed(1)}%</strong>
-                      </div>
-                    )}
-                  </>
-                )}
-
-                {/* CLUSTERING HERO */}
-                {(prediction.type === 'kMeans' || prediction.type === 'hierarchicalClustering' || prediction.type === 'dbscan') && (
-                  <>
-                    <div className="me-result-label">Assigned Cluster</div>
-                    {prediction.prediction === -1 ? (
-                      <div className="me-result-pill" style={{ background: '#fef2f2', color: '#ef4444', border: '1px solid #fee2e2' }}>
-                        Noise (-1)
-                      </div>
-                    ) : (
-                      <div className="me-result-pill" style={{
-                        background: `hsl(${(prediction.prediction * 137) % 360}, 70%, 95%)`,
-                        color: `hsl(${(prediction.prediction * 137) % 360}, 70%, 40%)`,
-                        border: `1px solid hsl(${(prediction.prediction * 137) % 360}, 70%, 85%)`
-                      }}>
-                        Cluster {prediction.prediction}
-                      </div>
-                    )}
-                    <div className="me-hero-metric">
-                      Dist to Centroid: <strong>{prediction.closestDistance.toFixed(4)}</strong>
-                    </div>
-                  </>
-                )}
-
-                {/* MLP HERO */}
-                {prediction.type === 'mlp' && (
-                  <>
-                    <div className="me-result-label">
-                      {prediction.task_type === 'regression' ? 'Predicted Value (MLP)' : 'Predicted Class (MLP)'}
-                    </div>
-                    {prediction.task_type === 'regression' ? (
-                      <div className="me-result-value">{prediction.prediction.toFixed(4)}</div>
-                    ) : (
-                      <div className="me-result-pill" style={{ background: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0' }}>
-                        Class {prediction.prediction}
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-
-              {/* DETAILS PANEL */}
-              <div className={`me-details-panel ${showDetails ? 'open' : ''}`}>
-                <div className="me-details-header" onClick={() => setShowDetails(!showDetails)}>
-                  <div className="me-details-title">
-                    <FaInfoCircle /> Prediction Details
+              <div className="me-input-grid">
+                {modelInfo.featureNames.map((feature) => (
+                  <div key={feature} className="me-input-field">
+                    <ClickToEditInput
+                      label={feature}
+                      value={inputValues[feature] || ''}
+                      onChange={(val) => handleInputChange(feature, val)}
+                      placeholder="0.00"
+                    />
                   </div>
-                  {showDetails ? <FaChevronUp /> : <FaChevronDown />}
-                </div>
+                ))}
+              </div>
+            </div>
 
-                <div className="me-details-content">
-                  {/* REGRESSION DETAILS */}
+            {/* 3. Pipeline Indicator (Only if preprocessing exists) */}
+            {modelInfo.model.preprocessing && (
+              <div className="me-pipeline">
+                <div className="me-pipeline-step">Input</div>
+                <FaArrowRight className="me-pipeline-arrow" />
+                <div className="me-pipeline-step" title="Standardization applied">Standardize</div>
+                <FaArrowRight className="me-pipeline-arrow" />
+                <div className="me-pipeline-step" title={`${modelInfo.model.preprocessing.type.toUpperCase()} Projection applied`}>
+                  {modelInfo.model.preprocessing.type.toUpperCase()}
+                </div>
+                <FaArrowRight className="me-pipeline-arrow" />
+                <div className="me-pipeline-step">Model</div>
+              </div>
+            )}
+
+            {/* 4. Action Area */}
+            <div className="me-actions">
+              <button className="me-compute-btn" onClick={calculatePrediction}>
+                <FaPlay style={{ fontSize: '0.8em' }} /> Compute Prediction
+              </button>
+            </div>
+
+            {/* 5. Error Display */}
+            {error && <div className="me-error">{error}</div>}
+
+            {/* 6. Result Hero Section */}
+            {/* 6. Result Hero Section (Always Visible) & 7. Details Panel (Collapsible) */}
+            {prediction && (
+              <>
+                <div className="me-result-hero">
+                  {/* REGRESSION HERO */}
                   {(prediction.type === 'linear' || prediction.type === 'multiLinear' || prediction.type === 'polynomial' || prediction.type === 'knn') && (
-                    <div className="me-insight-grid">
-                      <div className="me-insight-card">
-                        <div className="me-insight-label">Method</div>
-                        <div className="me-insight-value" style={{ fontSize: '0.9rem' }}>
-                          {prediction.type === 'knn' ? `KNN (k=${prediction.k})` : 'Equation'}
-                        </div>
+                    <>
+                      <div className="me-result-label">Predicted Target</div>
+                      <div className="me-result-value">
+                        {prediction.prediction.toFixed(4)}
                       </div>
-                      {prediction.degree && (
-                        <div className="me-insight-card">
-                          <div className="me-insight-label">Degree</div>
-                          <div className="me-insight-value">{prediction.degree}</div>
-                        </div>
-                      )}
-                      {prediction.type === 'knn' && (
-                        <div className="me-insight-card">
-                          <div className="me-insight-label">Metric</div>
-                          <div className="me-insight-value" style={{ fontSize: '0.85rem' }}>{prediction.distance_metric}</div>
-                        </div>
-                      )}
-                    </div>
+                    </>
                   )}
 
-                  {/* CLASSIFICATION DETAILS */}
+                  {/* CLASSIFICATION HERO */}
                   {(prediction.type === 'logistic' || prediction.type === 'knnClassification' || prediction.type === 'naiveBayes') && (
                     <>
-                      {(prediction.probabilities || prediction.votes) && (
-                        <div className="me-probs-list">
-                          <div className="me-insight-label" style={{ marginBottom: '8px' }}>
-                            {prediction.votes ? 'Neighbor Votes' : 'Class Probabilities'}
-                          </div>
-                          {prediction.probabilities && Object.entries(prediction.probabilities as Record<string, number>).map(([key, val]) => (
-                            <div key={key} className={`me-prob-row ${parseFloat(key) === prediction.prediction ? 'active' : ''}`}>
-                              <span>Class {key}</span>
-                              <span style={{ fontWeight: 600 }}>{(val * 100).toFixed(1)}%</span>
-                            </div>
-                          ))}
-                          {prediction.votes && Object.entries(prediction.votes as Record<string, number>).map(([key, val]) => (
-                            <div key={key} className={`me-prob-row ${parseFloat(key) === prediction.prediction ? 'active' : ''}`}>
-                              <span>Class {key}</span>
-                              <span style={{ fontWeight: 600 }}>{val} votes</span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-
-                      {prediction.type === 'knnClassification' && (
-                        <div className="me-insight-grid" style={{ marginTop: '12px' }}>
-                          <div className="me-insight-card">
-                            <div className="me-insight-label">K Neighbors</div>
-                            <div className="me-insight-value">{prediction.k}</div>
-                          </div>
-                          <div className="me-insight-card">
-                            <div className="me-insight-label">Metric</div>
-                            <div className="me-insight-value" style={{ fontSize: '0.8rem' }}>{prediction.distance_metric}</div>
-                          </div>
+                      <div className="me-result-label">Predicted Class</div>
+                      <div className="me-result-pill" style={{
+                        background: '#f0fdf4',
+                        color: '#166534',
+                        border: '1px solid #bbf7d0'
+                      }}>
+                        Class {prediction.prediction}
+                      </div>
+                      {(prediction.confidence || prediction.probability) && (
+                        <div className="me-hero-metric">
+                          Confidence: <strong>{prediction.confidence || (prediction.probability * 100).toFixed(1)}%</strong>
                         </div>
                       )}
                     </>
                   )}
 
-                  {/* CLUSTERING DETAILS */}
+                  {/* CLUSTERING HERO */}
                   {(prediction.type === 'kMeans' || prediction.type === 'hierarchicalClustering' || prediction.type === 'dbscan') && (
                     <>
-                      {/* Cluster Profile */}
-                      {(prediction.representative || prediction.closestCoreSample) && (
-                        <div style={{ marginBottom: '20px' }}>
-                          <div className="me-insight-label" style={{ marginBottom: '8px' }}>
-                            {prediction.type === 'dbscan' ? 'Nearest Core Sample (Features)' : 'Cluster Profile (Centroid Features)'}
-                          </div>
-                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))', gap: '8px' }}>
-                            {modelInfo.featureNames.map((feature, idx) => {
-                              const val = prediction.representative ? prediction.representative[idx] : (prediction.closestCoreSample ? prediction.closestCoreSample[idx] : null);
-                              return (
-                                <div key={feature} className="me-insight-card" style={{ padding: '8px', alignItems: 'flex-start', textAlign: 'left' }}>
-                                  <div style={{ fontSize: '0.65rem', color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }} title={feature}>
-                                    {feature}
-                                  </div>
-                                  <div style={{ fontWeight: '700', color: '#334155', fontFamily: 'monospace', fontSize: '0.85rem' }}>
-                                    {val !== null && val !== undefined ? val.toFixed(4) : '-'}
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
+                      <div className="me-result-label">Assigned Cluster</div>
+                      {prediction.prediction === -1 ? (
+                        <div className="me-result-pill" style={{ background: '#fef2f2', color: '#ef4444', border: '1px solid #fee2e2' }}>
+                          Noise (-1)
+                        </div>
+                      ) : (
+                        <div className="me-result-pill" style={{
+                          background: `hsl(${(prediction.prediction * 137) % 360}, 70%, 95%)`,
+                          color: `hsl(${(prediction.prediction * 137) % 360}, 70%, 40%)`,
+                          border: `1px solid hsl(${(prediction.prediction * 137) % 360}, 70%, 85%)`
+                        }}>
+                          Cluster {prediction.prediction}
                         </div>
                       )}
+                      <div className="me-hero-metric">
+                        Dist to Centroid: <strong>{prediction.closestDistance.toFixed(4)}</strong>
+                      </div>
+                    </>
+                  )}
 
-                      {/* Distance to Other Clusters */}
-                      {(prediction.distances || prediction.clusterDistances) && (
-                        <div>
-                          <div className="me-insight-label" style={{ marginBottom: '8px' }}>Distance to Other Clusters</div>
-                          <div className="me-dist-bar-container">
-                            {/* KMEANS / HIERARCHICAL LOGIC */}
-                            {prediction.distances && prediction.distances.map((dist, idx) => {
-                              const maxDist = Math.max(...prediction.distances) || 1;
-                              const widthPerc = Math.max(5, (1 - (dist / (maxDist * 1.2))) * 100);
-                              const isSelected = idx === prediction.prediction;
-                              return (
-                                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: isSelected ? 1 : 0.7 }}>
-                                  <div style={{
-                                    minWidth: '24px', height: '24px', borderRadius: '50%',
-                                    backgroundColor: ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B739', '#52B788'][idx % 10],
-                                    color: 'white', fontSize: '0.75rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center'
-                                  }}>{idx}</div>
+                  {/* MLP HERO */}
+                  {prediction.type === 'mlp' && (
+                    <>
+                      <div className="me-result-label">
+                        {prediction.task_type === 'regression' ? 'Predicted Value (MLP)' : 'Predicted Class (MLP)'}
+                      </div>
+                      {prediction.task_type === 'regression' ? (
+                        <div className="me-result-value">{prediction.prediction.toFixed(4)}</div>
+                      ) : (
+                        <div className="me-result-pill" style={{ background: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0' }}>
+                          Class {prediction.prediction}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
 
-                                  <div style={{ flex: 1, height: '6px', background: '#e2e8f0', borderRadius: '3px', overflow: 'hidden' }}>
-                                    <div style={{ width: `${widthPerc}%`, height: '100%', background: isSelected ? '#10b981' : '#cbd5e1' }}></div>
-                                  </div>
+                {/* DETAILS PANEL */}
+                <div className={`me-details-panel ${showDetails ? 'open' : ''}`}>
+                  <div className="me-details-header" onClick={() => setShowDetails(!showDetails)}>
+                    <div className="me-details-title">
+                      <FaInfoCircle /> Prediction Details
+                    </div>
+                    {showDetails ? <FaChevronUp /> : <FaChevronDown />}
+                  </div>
 
-                                  <div style={{ width: '50px', textAlign: 'right', fontFamily: 'monospace', fontSize: '0.8rem', fontWeight: isSelected ? '700' : '400' }}>
-                                    {dist.toFixed(4)}
-                                  </div>
-                                </div>
-                              );
-                            })}
+                  <div className="me-details-content">
+                    {/* REGRESSION DETAILS */}
+                    {(prediction.type === 'linear' || prediction.type === 'multiLinear' || prediction.type === 'polynomial' || prediction.type === 'knn') && (
+                      <div className="me-insight-grid">
+                        <div className="me-insight-card">
+                          <div className="me-insight-label">Method</div>
+                          <div className="me-insight-value" style={{ fontSize: '0.9rem' }}>
+                            {prediction.type === 'knn' ? `KNN (k=${prediction.k})` : 'Equation'}
+                          </div>
+                        </div>
+                        {prediction.degree && (
+                          <div className="me-insight-card">
+                            <div className="me-insight-label">Degree</div>
+                            <div className="me-insight-value">{prediction.degree}</div>
+                          </div>
+                        )}
+                        {prediction.type === 'knn' && (
+                          <div className="me-insight-card">
+                            <div className="me-insight-label">Metric</div>
+                            <div className="me-insight-value" style={{ fontSize: '0.85rem' }}>{prediction.distance_metric}</div>
+                          </div>
+                        )}
+                      </div>
+                    )}
 
-                            {/* DBSCAN LOGIC */}
-                            {prediction.clusterDistances && Object.entries(prediction.clusterDistances as Record<string, number>)
-                              .sort((a, b) => a[1] - b[1])
-                              .slice(0, 5)
-                              .map(([labelStr, dist]) => {
-                                const label = parseInt(labelStr);
-                                const maxDist = Math.max(...(Object.values(prediction.clusterDistances) as number[])) || 1;
-                                const widthPerc = Math.max(5, (1 - (dist / (maxDist * 1.2))) * 100);
-                                const isSelected = label === prediction.prediction;
+                    {/* CLASSIFICATION DETAILS */}
+                    {(prediction.type === 'logistic' || prediction.type === 'knnClassification' || prediction.type === 'naiveBayes') && (
+                      <>
+                        {(prediction.probabilities || prediction.votes) && (
+                          <div className="me-probs-list">
+                            <div className="me-insight-label" style={{ marginBottom: '8px' }}>
+                              {prediction.votes ? 'Neighbor Votes' : 'Class Probabilities'}
+                            </div>
+                            {prediction.probabilities && Object.entries(prediction.probabilities as Record<string, number>).map(([key, val]) => (
+                              <div key={key} className={`me-prob-row ${parseFloat(key) === prediction.prediction ? 'active' : ''}`}>
+                                <span>Class {key}</span>
+                                <span style={{ fontWeight: 600 }}>{(val * 100).toFixed(1)}%</span>
+                              </div>
+                            ))}
+                            {prediction.votes && Object.entries(prediction.votes as Record<string, number>).map(([key, val]) => (
+                              <div key={key} className={`me-prob-row ${parseFloat(key) === prediction.prediction ? 'active' : ''}`}>
+                                <span>Class {key}</span>
+                                <span style={{ fontWeight: 600 }}>{val} votes</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {prediction.type === 'knnClassification' && (
+                          <div className="me-insight-grid" style={{ marginTop: '12px' }}>
+                            <div className="me-insight-card">
+                              <div className="me-insight-label">K Neighbors</div>
+                              <div className="me-insight-value">{prediction.k}</div>
+                            </div>
+                            <div className="me-insight-card">
+                              <div className="me-insight-label">Metric</div>
+                              <div className="me-insight-value" style={{ fontSize: '0.8rem' }}>{prediction.distance_metric}</div>
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    )}
+
+                    {/* CLUSTERING DETAILS */}
+                    {(prediction.type === 'kMeans' || prediction.type === 'hierarchicalClustering' || prediction.type === 'dbscan') && (
+                      <>
+                        {/* Cluster Profile */}
+                        {(prediction.representative || prediction.closestCoreSample) && (
+                          <div style={{ marginBottom: '20px' }}>
+                            <div className="me-insight-label" style={{ marginBottom: '8px' }}>
+                              {prediction.type === 'dbscan' ? 'Nearest Core Sample (Features)' : 'Cluster Profile (Centroid Features)'}
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))', gap: '8px' }}>
+                              {modelInfo.featureNames.map((feature, idx) => {
+                                const val = prediction.representative ? prediction.representative[idx] : (prediction.closestCoreSample ? prediction.closestCoreSample[idx] : null);
                                 return (
-                                  <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: isSelected ? 1 : 0.7 }}>
+                                  <div key={feature} className="me-insight-card" style={{ padding: '8px', alignItems: 'flex-start', textAlign: 'left' }}>
+                                    <div style={{ fontSize: '0.65rem', color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }} title={feature}>
+                                      {feature}
+                                    </div>
+                                    <div style={{ fontWeight: '700', color: '#334155', fontFamily: 'monospace', fontSize: '0.85rem' }}>
+                                      {val !== null && val !== undefined ? val.toFixed(4) : '-'}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Distance to Other Clusters */}
+                        {(prediction.distances || prediction.clusterDistances) && (
+                          <div>
+                            <div className="me-insight-label" style={{ marginBottom: '8px' }}>Distance to Other Clusters</div>
+                            <div className="me-dist-bar-container">
+                              {/* KMEANS / HIERARCHICAL LOGIC */}
+                              {prediction.distances && prediction.distances.map((dist, idx) => {
+                                const maxDist = Math.max(...prediction.distances) || 1;
+                                const widthPerc = Math.max(5, (1 - (dist / (maxDist * 1.2))) * 100);
+                                const isSelected = idx === prediction.prediction;
+                                return (
+                                  <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: isSelected ? 1 : 0.7 }}>
                                     <div style={{
                                       minWidth: '24px', height: '24px', borderRadius: '50%',
-                                      backgroundColor: ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B739', '#52B788'][label % 10],
+                                      backgroundColor: ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B739', '#52B788'][idx % 10],
                                       color: 'white', fontSize: '0.75rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center'
-                                    }}>{label}</div>
+                                    }}>{idx}</div>
+
                                     <div style={{ flex: 1, height: '6px', background: '#e2e8f0', borderRadius: '3px', overflow: 'hidden' }}>
                                       <div style={{ width: `${widthPerc}%`, height: '100%', background: isSelected ? '#10b981' : '#cbd5e1' }}></div>
                                     </div>
+
                                     <div style={{ width: '50px', textAlign: 'right', fontFamily: 'monospace', fontSize: '0.8rem', fontWeight: isSelected ? '700' : '400' }}>
                                       {dist.toFixed(4)}
                                     </div>
                                   </div>
                                 );
-                              })
-                            }
+                              })}
+
+                              {/* DBSCAN LOGIC */}
+                              {prediction.clusterDistances && Object.entries(prediction.clusterDistances as Record<string, number>)
+                                .sort((a, b) => a[1] - b[1])
+                                .slice(0, 5)
+                                .map(([labelStr, dist]) => {
+                                  const label = parseInt(labelStr);
+                                  const maxDist = Math.max(...(Object.values(prediction.clusterDistances) as number[])) || 1;
+                                  const widthPerc = Math.max(5, (1 - (dist / (maxDist * 1.2))) * 100);
+                                  const isSelected = label === prediction.prediction;
+                                  return (
+                                    <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: isSelected ? 1 : 0.7 }}>
+                                      <div style={{
+                                        minWidth: '24px', height: '24px', borderRadius: '50%',
+                                        backgroundColor: ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B739', '#52B788'][label % 10],
+                                        color: 'white', fontSize: '0.75rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                      }}>{label}</div>
+                                      <div style={{ flex: 1, height: '6px', background: '#e2e8f0', borderRadius: '3px', overflow: 'hidden' }}>
+                                        <div style={{ width: `${widthPerc}%`, height: '100%', background: isSelected ? '#10b981' : '#cbd5e1' }}></div>
+                                      </div>
+                                      <div style={{ width: '50px', textAlign: 'right', fontFamily: 'monospace', fontSize: '0.8rem', fontWeight: isSelected ? '700' : '400' }}>
+                                        {dist.toFixed(4)}
+                                      </div>
+                                    </div>
+                                  );
+                                })
+                              }
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    )}
+
+                    {/* MLP DETAILS */}
+                    {prediction.type === 'mlp' && (
+                      <>
+                        {prediction.probabilities && (
+                          <div className="me-probs-list" style={{ marginBottom: '16px' }}>
+                            <div className="me-insight-label" style={{ marginBottom: '8px' }}>Class Probabilities</div>
+                            {prediction.probabilities.map((prob, idx) => {
+                              const className = prediction.task_type === 'binary_classification'
+                                ? idx
+                                : (modelInfo.model.classes ? modelInfo.model.classes[idx] : idx);
+                              const isMax = prob === Math.max(...prediction.probabilities);
+                              return (
+                                <div key={idx} className={`me-prob-row ${isMax ? 'active' : ''}`}>
+                                  <span>Class {className}</span>
+                                  <span style={{ fontWeight: 600 }}>{(prob * 100).toFixed(1)}%</span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                        <div className="me-insight-grid">
+                          <div className="me-insight-card">
+                            <div className="me-insight-label">Architecture</div>
+                            <div className="me-insight-value" style={{ fontSize: '0.8rem' }}>{prediction.architecture.hidden_layers.join('-')}</div>
+                          </div>
+                          <div className="me-insight-card">
+                            <div className="me-insight-label">Activation</div>
+                            <div className="me-insight-value" style={{ fontSize: '0.8rem' }}>{prediction.architecture.activation}</div>
                           </div>
                         </div>
-                      )}
-                    </>
-                  )}
-
-                  {/* MLP DETAILS */}
-                  {prediction.type === 'mlp' && (
-                    <>
-                      {prediction.probabilities && (
-                        <div className="me-probs-list" style={{ marginBottom: '16px' }}>
-                          <div className="me-insight-label" style={{ marginBottom: '8px' }}>Class Probabilities</div>
-                          {prediction.probabilities.map((prob, idx) => {
-                            const className = prediction.task_type === 'binary_classification'
-                              ? idx
-                              : (modelInfo.model.classes ? modelInfo.model.classes[idx] : idx);
-                            const isMax = prob === Math.max(...prediction.probabilities);
-                            return (
-                              <div key={idx} className={`me-prob-row ${isMax ? 'active' : ''}`}>
-                                <span>Class {className}</span>
-                                <span style={{ fontWeight: 600 }}>{(prob * 100).toFixed(1)}%</span>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
-                      <div className="me-insight-grid">
-                        <div className="me-insight-card">
-                          <div className="me-insight-label">Architecture</div>
-                          <div className="me-insight-value" style={{ fontSize: '0.8rem' }}>{prediction.architecture.hidden_layers.join('-')}</div>
-                        </div>
-                        <div className="me-insight-card">
-                          <div className="me-insight-label">Activation</div>
-                          <div className="me-insight-value" style={{ fontSize: '0.8rem' }}>{prediction.architecture.activation}</div>
-                        </div>
-                      </div>
-                    </>
-                  )}
+                      </>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </>
-          )}
+              </>
+            )}
 
-        </>
-      )}
-
-      <Handle type="source" position={Position.Bottom} isConnectable={isConnectable} />
-      <InfoButton nodeType="modelEvaluator" style={{ zIndex: 10 }} />
-    </div>
+          </>
+        )}
+      </div>
+      <Handle type="source" position={Position.Bottom} isConnectable={isConnectable} className="custom-handle" style={{ zIndex: 10 }} />
+    </>
   );
 };
 
